@@ -27,6 +27,10 @@ def verify_slack_token(request_token):
         return make_response("Request contains invalid Slack verification token", 403)
 
 
+@app.route("/", methods=["POST"])
+def lol():
+    return "Works"
+
 # The endpoint Slack will send the user's menu selection to
 @app.route("/slack/message_actions", methods=["POST"])
 def message_actions():
