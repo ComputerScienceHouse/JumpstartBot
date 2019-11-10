@@ -101,5 +101,4 @@ def handle_message(event_data):
 def error_handler(err):
     print(f"[ERROR] {str(err)}", file=sys.stderr)
 
-if __name__ == '__main__':
-    slack_events_adapter.start(port=3000)
+slack_events_adapter.start(port=8080)
