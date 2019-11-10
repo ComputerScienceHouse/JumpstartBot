@@ -101,3 +101,5 @@ def handle_message(event_data):
 def error_handler(err):
     print(f"[ERROR] {str(err)}", file=sys.stderr)
 
+if __name__ == '__main__':
+    app.run(debug=True)
