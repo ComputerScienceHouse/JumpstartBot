@@ -11,7 +11,7 @@ app = Flask(__name__)
 # Our app's Slack Event Adapter for receiving actions via the Events API
 slack_verification_secret = os.environ.get("SLACK_VERIFICATION_TOKEN")
 slack_signing_secret = os.environ.get("SLACK_SIGNING_SECRET")
-slack_events_adapter = SlackEventAdapter(slack_signing_secret, "/slack/events", server=app)
+slack_events_adapter = SlackEventAdapter(slack_signing_secret, "/slack/events")
 
 # Create a SlackClient for your bot to use for Web API requests
 slack_bot_token = os.environ.get("SLACK_BOT_TOKEN")
@@ -102,4 +102,4 @@ def error_handler(err):
     print(f"[ERROR] {str(err)}", file=sys.stderr)
 
 if __name__ == '__main__':
-    app.run(debug=True)
+    slack_events_adapter.start(port=3000)
