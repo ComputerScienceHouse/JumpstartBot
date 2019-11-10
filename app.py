@@ -5,8 +5,6 @@ from flask import Flask, request, jsonify, redirect, make_response, Response
 import json, random, textwrap, requests
 from slackeventsapi import SlackEventAdapter
 from slack import WebClient
-from dotenv import load_dotenv
-load_dotenv()
 
 app = Flask(__name__)
 
