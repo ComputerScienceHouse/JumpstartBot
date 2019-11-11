@@ -34,7 +34,7 @@ def lol():
 @app.route("/slack/message_actions", methods=["POST"])
 def message_actions():
 
-    return make_response("", 200)
+    return "zdsxfghjk"
     # Parse the request payload
     form_json = json.loads(request.form["payload"])
 
