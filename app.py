@@ -49,6 +49,7 @@ def message_actions():
         announcement_json = {"ann_body" : text }
         res = requests.post('https://jumpstart.csh.rit.edu/update-announcement', json=announcement_json)
         print(res)
+        print("Interactivity API: " + text)
         return make_response("Posting right now :)", 200)
     elif selection == "no_j":
         return make_response("Aight bet", 200)
@@ -66,6 +67,7 @@ def handle_message(event_data):
     channel = message["channel"]
     global text 
     text = message["text"]
+    print("Event API: " + text)
     subtype = message.get("subtype")
 
 
