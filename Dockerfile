@@ -5,6 +5,8 @@ RUN mkdir /opt/jumpstart-slackbot
 
 COPY requirements.txt /opt/jumpstart-slackbot
 
+WORKDIR /opt/jumpstart-slackbot
+
 RUN pip install -r requirements.txt
 
 COPY . /opt/jumpstart-slackbot
