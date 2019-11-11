@@ -26,7 +26,7 @@ def verify_slack_token(request_token):
         print("Received {} but was expecting {}".format(request_token, slack_verification_secret))
         return make_response("Request contains invalid Slack verification token", 403)
 
-@app.route("/")
+@app.route("/",  methods=["GET"])
 def lol():
     return "Works"
 
@@ -34,7 +34,6 @@ def lol():
 @app.route("/slack/message_actions", methods=["POST"])
 def message_actions():
 
-    return "zdsxfghjk"
     # Parse the request payload
     form_json = json.loads(request.form["payload"])
 
