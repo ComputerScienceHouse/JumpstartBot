@@ -105,4 +105,4 @@ def error_handler(err):
     print(f"[ERROR] {str(err)}", file=sys.stderr)
 
 
-app.run(host="0.0.0.0")
+slack_events_adapter.start(host="0.0.0.0")
