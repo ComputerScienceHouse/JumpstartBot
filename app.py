@@ -26,7 +26,6 @@ def verify_slack_token(request_token):
         print("Received {} but was expecting {}".format(request_token, slack_verification_secret))
         return make_response("Request contains invalid Slack verification token", 403)
 
-
 @app.route("/")
 def lol():
     return "Works"
@@ -105,4 +104,8 @@ def handle_message(event_data):
 def error_handler(err):
     print(f"[ERROR] {str(err)}", file=sys.stderr)
 
-slack_events_adapter.start(host="0.0.0.0")
+
+# Start the Flask server
+if __name__ == "__main__":
+    slack_events_adapter.start(host="0.0.0.0")
+    app.run(host="0.0.0.0")
