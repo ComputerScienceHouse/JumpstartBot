@@ -34,6 +34,7 @@ def lol():
 @app.route("/slack/message_actions", methods=["POST"])
 def message_actions():
 
+    return make_response("", 200)
     # Parse the request payload
     form_json = json.loads(request.form["payload"])
 
@@ -105,7 +106,4 @@ def error_handler(err):
     print(f"[ERROR] {str(err)}", file=sys.stderr)
 
 
-# Start the Flask server
-if __name__ == "__main__":
-    slack_events_adapter.start(host="0.0.0.0")
-    app.run(host="0.0.0.0")
+slack_events_adapter.start(host="0.0.0.0")
