@@ -42,7 +42,8 @@ def handle_message(event_data):
     subtype = message.get("subtype")
 
     global text
-    text = re.sub('<.*?>', '', textp, flags=re.IGNORECASE).sub('[&lt;].*?[&gt;]', '', textp, flags=re.IGNORECASE)
+    textpp = re.sub('<.*?>', '', textp, flags=re.IGNORECASE)
+    text = re.sub('[&]lt;.*?[&]gt;', '', textpp, flags=re.IGNORECASE)
     
     # A Dictionary of message attachment options
     attachments_json = [
