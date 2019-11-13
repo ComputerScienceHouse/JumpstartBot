@@ -41,6 +41,7 @@ def handle_message(event_data):
     textp = message["text"]
     subtype = message.get("subtype")
 
+    global text
     text = re.sub(r'<.*?>', '', textp, flags=re.IGNORECASE)
     
     # A Dictionary of message attachment options
@@ -88,6 +89,7 @@ def message_actions():
 
     print(selection)
     if selection == "yes_j":
+        global text
         announcement_json = {"ann_body" : text }
         res = requests.post('https://jumpstart.csh.rit.edu/update-announcement', json=announcement_json)
         print(res)
