@@ -47,7 +47,6 @@ def message_actions():
 
     print(selection)
     if selection == "yes_j":
-        global text
         announcement_json = {"ann_body" : text }
         res = requests.post('https://jumpstart.csh.rit.edu/update-announcement', json=announcement_json)
         print(res)
