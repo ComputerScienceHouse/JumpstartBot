@@ -47,8 +47,7 @@ def message_actions():
     print(selection)
     if selection == "yes_j":
         global text
-        textParsed = text
-        text = textParsed.replaceAll("<.*?>", "")
+        text = re.sub(r'<.*?>', '', text, flags=re.IGNORECASE)
         announcement_json = {"ann_body" : text }
         res = requests.post('https://jumpstart.csh.rit.edu/update-announcement', json=announcement_json)
         print(res)
@@ -108,9 +107,4 @@ def handle_message(event_data):
 @slack_events_adapter.on("error")
 def error_handler(err):
     print(f"[ERROR] {str(err)}", file=sys.stderr)
-
-def replacement(toBe):
-    
-
-
 
