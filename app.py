@@ -48,7 +48,6 @@ def message_actions():
     print(selection)
     if selection == "yes_j":
         global text
-        text = re.sub(r'<.*?>', '', text, flags=re.IGNORECASE)
         announcement_json = {"ann_body" : text }
         res = requests.post('https://jumpstart.csh.rit.edu/update-announcement', json=announcement_json)
         print(res)
@@ -70,10 +69,11 @@ def handle_message(event_data):
     
     username = message["user"]
     channel = message["channel"]
-    text = message["text"]
+    textp = message["text"]
     subtype = message.get("subtype")
 
-
+    text = re.sub(r'<.*?>', '', textp, flags=re.IGNORECASE)
+    
     # A Dictionary of message attachment options
     attachments_json = [
         {
