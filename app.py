@@ -47,7 +47,7 @@ def message_actions():
 
     print(selection)
     if selection == "yes_j":
-        announcement_json = {"ann_body" : text }
+        announcement_json = {"ann_body" : handle_message.text }
         res = requests.post('https://jumpstart.csh.rit.edu/update-announcement', json=announcement_json)
         print(res)
         return make_response("Posting right now :^)", 200)
