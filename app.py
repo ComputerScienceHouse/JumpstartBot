@@ -9,7 +9,8 @@ from slack import WebClient
 
 app = Flask(__name__)
 
-# Our app's Slack Event Adapter for receiving actions via the Events API
+# Get secrets
+jumpstart_verification_secret = os.environ.get("JUMPSTART_VERIFICATION_SECRET")
 slack_verification_secret = os.environ.get("SLACK_VERIFICATION_TOKEN")
 slack_signing_secret = os.environ.get("SLACK_SIGNING_SECRET")
 slack_events_adapter = SlackEventAdapter(slack_signing_secret, "/slack/events", app)
@@ -67,7 +68,7 @@ I'm trying to explain that I'm a person who wishes to live a very quiet life. I 
 def handle_message(event_data):
     message = event_data["event"]
     
-    user = message["user"]
+    username = message["user"]
     channel = message["channel"]
     text = message["text"]
     subtype = message.get("subtype")
@@ -101,7 +102,7 @@ def handle_message(event_data):
     ]
 
     if subtype == None:
-        slack_client.chat_postMessage(channel=user, text="Would you like to post this message to Jumpstart?", attachments=attachments_json)
+        slack_client.chat_postMessage(channel=username, text="Would you like to post this message to Jumpstart?", attachments=attachments_json)
         
 
 @slack_events_adapter.on("error")
