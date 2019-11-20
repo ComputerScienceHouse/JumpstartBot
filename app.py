@@ -10,7 +10,6 @@ from slack import WebClient
 app = Flask(__name__)
 
 # Get secrets
-jumpstart_verification_secret = os.environ.get("JUMPSTART_VERIFICATION_SECRET")
 slack_verification_secret = os.environ.get("SLACK_VERIFICATION_TOKEN")
 slack_signing_secret = os.environ.get("SLACK_SIGNING_SECRET")
 slack_events_adapter = SlackEventAdapter(slack_signing_secret, "/slack/events", app)
