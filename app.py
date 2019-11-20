@@ -35,45 +35,45 @@ def lol():
 @slack_events_adapter.on("message")
 def handle_message(event_data):
     message = event_data["event"]
-    
-    username = message["user"]
     channel = message["channel"]
     textp = message["text"]
     subtype = message.get("subtype")
+    username = message["user"]
 
-    global text
-    textpp = re.sub('<.*?>', '', textp, flags=re.IGNORECASE)
-    text = re.sub('[&]lt;.*?[&]gt;', '', textpp, flags=re.IGNORECASE)
-    
-    # A Dictionary of message attachment options
-    attachments_json = [
-        {
-            "text": "Options:",
-            "fallback": "You are unable to post this to Jumpstart",
-            "callback_id": "send_to_jumpstart",
-            "color": "#800080",
-            "attachment_type": "default",
-            "actions": [
-                {
-                    "name": "yes_j",
-                    "text": "Yes",
-                    "style": "primary",
-                    "type": "button",
-                    "value": "yes"
-                },
-                {
-                    "name": "no_j",
-                    "text": "No",
-                    "style": "danger",
-                    "type": "button",
-                    "value": "no"
-                }
-            ]
-        }
-    ]
+    if (channel == "C04S6SNCS") or (channel == "CP4U7A272"):
+        global text
+        textpp = re.sub('<.*?>', '', textp, flags=re.IGNORECASE)
+        text = re.sub('[&]lt;.*?[&]gt;', '', textpp, flags=re.IGNORECASE)
+        
+        # A Dictionary of message attachment options
+        attachments_json = [
+            {
+                "text": "Options:",
+                "fallback": "You are unable to post this to Jumpstart",
+                "callback_id": "send_to_jumpstart",
+                "color": "#800080",
+                "attachment_type": "default",
+                "actions": [
+                    {
+                        "name": "yes_j",
+                        "text": "Yes",
+                        "style": "primary",
+                        "type": "button",
+                        "value": "yes"
+                    },
+                    {
+                        "name": "no_j",
+                        "text": "No",
+                        "style": "danger",
+                        "type": "button",
+                        "value": "no"
+                    }
+                ]
+            }
+        ]
 
-    if subtype == None:
-        slack_client.chat_postMessage(channel=username, text="Would you like to post this message to Jumpstart?", attachments=attachments_json)
+        if subtype == None:
+            slack_client.chat_postMessage(channel=username, text="Would you like to post this message to Jumpstart?", attachments=attachments_json)
         
 # The endpoint Slack will send the user's menu selection to
 @app.route("/slack/message_actions", methods=["POST"])
