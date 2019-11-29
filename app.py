@@ -34,12 +34,12 @@ def lol():
 @slack_events_adapter.on("message")
 def handle_message(event_data):
     message = event_data["event"]
+    username = message["user"]
     channel = message["channel"]
     textp = message["text"]
     subtype = message.get("subtype")
-    username = message["user"]
 
-    if (channel == "C04S6SNCS") or (channel == "CP4U7A272"):
+    if "C04S6SNCS" in channel or "CP4U7A272" in channel:
         global text
         textpp = re.sub('<.*?>', '', textp, flags=re.IGNORECASE)
         text = re.sub('[&]lt;.*?[&]gt;', '', textpp, flags=re.IGNORECASE)
