@@ -40,7 +40,7 @@ def handle_message(event_data):
     textp = message["text"]
     subtype = message.get("subtype")
 
-    if "C04S6SNCS" in channel or "GR105V2RY" in channel:
+    if "C04S6SNCS" in channel or "CRDPKAAUV" in channel:
         global text
         textpp = re.sub('<.*?>', '', textp, flags=re.IGNORECASE)
         text = re.sub('[&]lt;.*?[&]gt;', '', textpp, flags=re.IGNORECASE)
