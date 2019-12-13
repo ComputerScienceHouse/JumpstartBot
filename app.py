@@ -43,8 +43,8 @@ def handle_message(event_data):
     if "C04S6SNCS" in channel or "CRDPKAAUV" in channel:
         global text
         textpp = re.sub('<.*?>', '', textp, flags=re.IGNORECASE)
-        textppp = re.sub('[:].*?[:]', '', textpp, flags=re.IGNORECASE)
-        text = re.sub('[&]lt;.*?[&]gt;', '', textppp, flags=re.IGNORECASE).replace('*', '').replace('_', '')
+        # textppp = re.sub('[:].*?[:]', '', textpp, flags=re.IGNORECASE)
+        text = re.sub('[&]lt;.*?[&]gt;', '', textpp, flags=re.IGNORECASE).replace('*', '').replace('_', '')
         
         # A Dictionary of message attachment options
         attachments_json = [
