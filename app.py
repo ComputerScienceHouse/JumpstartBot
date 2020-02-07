@@ -40,6 +40,8 @@ def handle_message(event_data):
     textp = message["text"]
     subtype = message.get("subtype")
 
+# C04S6SNCS is #announcements
+# GTDAHFJCB is private channel
     if "C04S6SNCS" in channel or "CRDPKAAUV" in channel:
         global text
         textpp = re.sub('<.*?>', '', textp, flags=re.IGNORECASE)
