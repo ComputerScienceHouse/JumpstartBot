@@ -42,53 +42,7 @@ def handle_message(event_data):
 
 # C04S6SNCS is #announcements
 # GTDAHFJCB is private channel
-    if "C04S6SNCS" in channel:
-        global text
-        textpp = re.sub('<.*?>', '', textp, flags=re.IGNORECASE)
-        # textppp = re.sub('[:].*?[:]', '', textpp, flags=re.IGNORECASE)
-        text = re.sub('[&]lt;.*?[&]gt;', '', textpp, flags=re.IGNORECASE).replace('*', '').replace('_', '').replace('`', '')
-        
-        # A Dictionary of message attachment options
-        attachments_json = [
-            {
-                "text": "Options:",
-                "fallback": "You are unable to post this to Jumpstart",
-                "callback_id": "send_to_jumpstart",
-                "color": "#800080",
-                "attachment_type": "default",
-                "actions": [
-                    {
-                        "name": "yes_j",
-                        "text": "Yes",
-                        "style": "primary",
-                        "type": "button",
-                        "value": "yes"
-                    },
-                    {
-                        "name": "no_j",
-                        "text": "No",
-                        "style": "danger",
-                        "type": "button",
-                        "value": "no"
-                    }
-                ]
-            }
-        ]
-
-        if subtype == None:
-            slack_client.chat_postMessage(channel=username, text="Would you like to post this message to Jumpstart?\n\n" + text, attachments=attachments_json)
-
-@slack_events_adapter.on("message_groups")
-def handle_message(event_data):
-    message = event_data["event"]
-    username = message["user"]
-    channel = message["channel"]
-    textp = message["text"]
-    subtype = message.get("subtype")
-
-# C04S6SNCS is #announcements
-# GTDAHFJCB is private channel
-    if "GTDAHFJCB" in channel:
+    if "C04S6SNCS" in channel or "GTDAHFJCB" in channel:
         global text
         textpp = re.sub('<.*?>', '', textp, flags=re.IGNORECASE)
         # textppp = re.sub('[:].*?[:]', '', textpp, flags=re.IGNORECASE)
