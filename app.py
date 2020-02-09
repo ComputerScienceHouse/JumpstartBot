@@ -1,3 +1,4 @@
+# https://jumpstart-slack.cs.house/slack/events
 import os
 import sys
 import time
@@ -35,10 +36,11 @@ def lol():
 @slack_events_adapter.on("message")
 def handle_message(event_data):
     message = event_data["event"]
-    username = message["user"]
     channel = message["channel"]
-    textp = message["text"]
     subtype = message.get("subtype")
+    # if subtype != "message_deleted":
+    username = message["user"]
+    textp = message["text"]
 
 # C04S6SNCS is #announcements
 # GTDAHFJCB is private channel
