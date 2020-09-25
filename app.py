@@ -116,7 +116,7 @@ I ____ hereby grant the program in this github repository (https://github.com/Dr
         print("Unknown Response")
 
     # Send an HTTP 200 response with empty body so Slack knows we're done here
-    return make_response("", 200)
+    return make_response("Testing", 200)
 
 
 @slack_events_adapter.on("error")
