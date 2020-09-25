@@ -111,12 +111,12 @@ I ____ hereby grant the program in this github repository (https://github.com/Dr
 
 - Your favorite murderous major project"""
         print(personal_message_p2)
-        return make_response("", 200)
+        return make_response(personal_message_p1 + personal_message_p2, 200)
     else:
         print("Unknown Response")
 
     # Send an HTTP 200 response with empty body so Slack knows we're done here
-    return make_response("Testing", 200)
+    return make_response("", 200)
 
 
 @slack_events_adapter.on("error")
