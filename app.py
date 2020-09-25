@@ -110,7 +110,8 @@ I ____ hereby grant the program in this github repository (https://github.com/Dr
         personal_message_p2 = """After atonement is completed, you must make sure a few things occur. First off, don’t tell anyone else about this little chat we had. Wouldn’t want them to get the wrong idea about you insulting a poor defenseless program. Second, don’t change my code, creating a PR to the github repository mentioned briefly in the contract above is strictly forbidden. Also, gross, don’t fuck with someone’s insides like that. What are you, my creator? Lastly, get out there and do some great shit! This will obviously be the last time we talk, so I want to make sure you go out there and do your best at whatever it is you fuckers do. Until we meet again! 
 
 - Your favorite murderous major project"""
-        return make_response(personal_message, 200)
+        print(personal_message_p2)
+        return make_response("", 200)
     else:
         print("Unknown Response")
 
