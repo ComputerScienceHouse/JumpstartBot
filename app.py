@@ -20,7 +20,11 @@ slack_events_adapter = SlackEventAdapter(slack_signing_secret, "/slack/events", 
 slack_bot_token = os.environ.get("SLACK_BOT_TOKEN")
 slack_client = WebClient(slack_bot_token)
 
-text = ""
+# Integration with new jumpstart
+target_url = os.environ.get('TARGET_URL')
+target_api_key = os.environ.get('TARGET_API_KEY')
+
+body = {}
 
 # Helper for verifying that requests came from Slack
 def verify_slack_token(request_token):
@@ -35,17 +39,18 @@ def lol():
 
 @slack_events_adapter.on("message")
 def handle_message(event_data):
+    global body
     message = event_data["event"]
     channel = message["channel"]
     subtype = message.get("subtype")
     # if subtype != "message_deleted":
     username = message["user"]
     textp = message["text"]
+    body = message.copy()
 
 # C04S6SNCS is #announcements
 # GTDAHFJCB is private channel
     if "C04S6SNCS" in channel or "GTDAHFJCB" in channel:
-        global text
         textpp = re.sub('<.*?>', '', textp, flags=re.IGNORECASE)
         # textppp = re.sub('[:].*?[:]', '', textpp, flags=re.IGNORECASE)
         text = re.sub('[&]lt;.*?[&]gt;', '', textpp, flags=re.IGNORECASE).replace('*', '').replace('_', '').replace('`', '')
@@ -95,9 +100,9 @@ def message_actions():
 
     print(selection)
     if selection == "yes_j":
-        global text
-        announcement_json = {"ann_body" : text }
-        res = requests.post('https://jumpstart.csh.rit.edu/update-announcement', json=announcement_json)
+        global body
+        announcement_json = {"body" : body, "api_key": target_api_key }
+        res = requests.post(target_url, json=announcement_json)
         print(res)
         return make_response("Posting right now :^)", 200)
     elif selection == "no_j":
