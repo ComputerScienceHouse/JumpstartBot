@@ -23,7 +23,7 @@ slack_client = WebClient(slack_bot_token)
 text = ""
 emoji_call = slack_client.emoji_list()
 
-if emoji_call["ok"] == true:
+if emoji_call["ok"] == True:
     emoji_list = emoji_call["emoji"]
 else:
     emoji_list = "None"
