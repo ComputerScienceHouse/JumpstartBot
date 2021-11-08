@@ -21,6 +21,7 @@ slack_bot_token = os.environ.get("SLACK_BOT_TOKEN")
 slack_client = WebClient(slack_bot_token)
 
 text = ""
+emoji_list = slack_client.emoji_list()
 
 # Helper for verifying that requests came from Slack
 def verify_slack_token(request_token):
@@ -80,7 +81,6 @@ def handle_message(event_data):
         if subtype == None:
             slack_client.chat_postMessage(channel=username, text="Would you like to post this message to Jumpstart?\n\n" + text, attachments=attachments_json)
 
-        asdf = slack_client.emoji_list()
 # The endpoint Slack will send the user's menu selection to
 @app.route("/slack/message_actions", methods=["POST"])
 def message_actions():
