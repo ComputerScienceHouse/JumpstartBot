@@ -78,6 +78,7 @@ def handle_message(event_data):
         ]
 
         asdf = slack_client.emoji_list()
+        
         if subtype == None:
             slack_client.chat_postMessage(channel=username, text="Would you like to post this message to Jumpstart?\n\n" + asdf, attachments=attachments_json)
 
