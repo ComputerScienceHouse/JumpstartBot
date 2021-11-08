@@ -102,8 +102,7 @@ def message_actions():
     print(selection)
     if selection == "yes_j":
         global text
-        announcement_json = 
-        {
+        announcement_json = {
             "ann_body" : text,
             "emoji_list": emoji_list
         }
