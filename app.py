@@ -21,7 +21,12 @@ slack_bot_token = os.environ.get("SLACK_BOT_TOKEN")
 slack_client = WebClient(slack_bot_token)
 
 text = ""
-emoji_list = slack_client.emoji_list()
+emoji_call = slack_client.emoji_list()
+
+if emoji_call["ok"] == true:
+    emoji_list = emoji_call["emoji"]
+else:
+    emoji_list = "None"
 
 # Helper for verifying that requests came from Slack
 def verify_slack_token(request_token):
@@ -97,7 +102,12 @@ def message_actions():
     print(selection)
     if selection == "yes_j":
         global text
-        announcement_json = {"ann_body" : text }
+        announcement_json = 
+        {
+            "ann_body" : text,
+            "emoji_list": emoji_list
+        }
+        print(announcement_json)
         res = requests.post('https://jumpstart.csh.rit.edu/update-announcement', json=announcement_json)
         print(res)
         return make_response("Posting right now :^)", 200)
