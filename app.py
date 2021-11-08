@@ -35,13 +35,13 @@ def lol():
 
 @slack_events_adapter.on("message")
 def handle_message(event_data):
+    return(event_data)
     message = event_data["event"]
     channel = message["channel"]
     subtype = message.get("subtype")
     # if subtype != "message_deleted":
     username = message["user"]
     textp = message["text"]
-    print(event_data)
 
 # C04S6SNCS is #announcements
 # GTDAHFJCB is private channel
