@@ -77,9 +77,10 @@ def handle_message(event_data):
             }
         ]
 
+        asdf = slack_client.emoji_list()
         if subtype == None:
-            slack_client.chat_postMessage(channel=username, text="Would you like to post this message to Jumpstart?\n\n" + text, attachments=attachments_json)
-        
+            slack_client.chat_postMessage(channel=username, text="Would you like to post this message to Jumpstart?\n\n" + asdf, attachments=attachments_json)
+
 # The endpoint Slack will send the user's menu selection to
 @app.route("/slack/message_actions", methods=["POST"])
 def message_actions():
