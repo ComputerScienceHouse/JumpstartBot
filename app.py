@@ -35,7 +35,6 @@ def lol():
 
 @slack_events_adapter.on("message")
 def handle_message(event_data):
-    return(event_data)
     message = event_data["event"]
     channel = message["channel"]
     subtype = message.get("subtype")
