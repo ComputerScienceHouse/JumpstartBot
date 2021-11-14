@@ -21,6 +21,7 @@ slack_bot_token = os.environ.get("SLACK_BOT_TOKEN")
 slack_client = WebClient(slack_bot_token)
 
 text = ""
+username = ""
 emoji_call = slack_client.emoji_list()
 
 if emoji_call["ok"] == True:
@@ -45,16 +46,18 @@ def handle_message(event_data):
     channel = message["channel"]
     subtype = message.get("subtype")
     # if subtype != "message_deleted":
-    username = message["user"]
+    usernamep = message["user"]
     textp = message["text"]
 
 # C04S6SNCS is #announcements
 # GTDAHFJCB is private channel
     if "C04S6SNCS" in channel or "GTDAHFJCB" in channel:
         global text
+        global username
         textpp = re.sub('<.*?>', '', textp, flags=re.IGNORECASE)
         # textppp = re.sub('[:].*?[:]', '', textpp, flags=re.IGNORECASE)
         text = re.sub('[&]lt;.*?[&]gt;', '', textpp, flags=re.IGNORECASE).replace('*', '').replace('_', '').replace('`', '')
+        username = usernamep
         
         # A Dictionary of message attachment options
         attachments_json = [
@@ -84,7 +87,7 @@ def handle_message(event_data):
         ]
         
         if subtype == None:
-            slack_client.chat_postMessage(channel=username, text="Would you like to post this message to Jumpstart?\n\n" + text, attachments=attachments_json)
+            slack_client.chat_postMessage(channel=usernamep, text="Would you like to post this message to Jumpstart?\n\n" + text, attachments=attachments_json)
 
 # The endpoint Slack will send the user's menu selection to
 @app.route("/slack/message_actions", methods=["POST"])
@@ -102,9 +105,11 @@ def message_actions():
     print(selection)
     if selection == "yes_j":
         global text
+        global username
         announcement_json = {
             "ann_body" : text,
-            "emoji_list": emoji_list
+            "emoji_list": emoji_list,
+            "name": username
         }
         print(announcement_json)
         res = requests.post('https://jumpstart.csh.rit.edu/update-announcement', json=announcement_json)
