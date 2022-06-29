@@ -51,7 +51,8 @@ def handle_message(event_data):
 
 # C04S6SNCS is #announcements
 # GTDAHFJCB is private channel
-    if "C04S6SNCS" in channel or "GTDAHFJCB" in channel:
+#     if "C04S6SNCS" in channel or "GTDAHFJCB" in channel:
+    if "GTDAHFJCB" in channel:
         global text
         global username
         textpp = re.sub('<.*?>', '', textp, flags=re.IGNORECASE)
