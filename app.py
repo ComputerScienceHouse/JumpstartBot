@@ -104,7 +104,6 @@ def message_actions():
     # Check to see what the user's selection was and update the message accordingly
     selection = form_json["actions"][0]["name"]
     
-    print(js_auth_token)
     print(selection)
     if selection == "yes_j":
         global text
