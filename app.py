@@ -109,14 +109,17 @@ def message_actions():
     if selection == "yes_j":
         global text
         global username
+        headers_json = {
+            "content-type": "application/json",
+            "authorization": js_auth_token
+        }
         announcement_json = {
-            "auth" : "lmao",
             "ann_body" : text,
             "emoji_list": emoji_list,
             "name": username
         }
         print(announcement_json)
-        res = requests.post('https://jumpstart.csh.rit.edu/update-announcement', json=announcement_json)
+        res = requests.post('https://jumpstart.csh.rit.edu/update-announcement', json=announcement_json, headers=headers_json)
         print(res)
         return make_response("Posting right now :^)", 200)
     elif selection == "no_j":
