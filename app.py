@@ -46,10 +46,11 @@ def handle_message(event_data):
     message = event_data["event"]
     channel = message["channel"]
     subtype = message.get("subtype")
-    # if subtype != "message_deleted":
-    usernamep = message["user"]
-    textp = message["text"]
-    print(message)
+    usernamep = message.get("user")
+    if usernamep is not None:
+        textp = message["text"]
+    
+    print(event_data)
 
 # C04S6SNCS is #announcements
 # GTDAHFJCB is private channel
