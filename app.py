@@ -45,13 +45,12 @@ def lol():
 
 @slack_events_adapter.on("message")
 def handle_message(event_data):
-    message = event_data["event"]
-    channel = message["channel"]
+    logging.info(event_data)
+    message = event_data.get("event")
+    channel = message.get("channel")
     subtype = message.get("subtype")
     usernamep = message.get("user")
-    textp = message["text"]
-    
-    logging.info(event_data["event"]["user"])
+    textp = message.get("text")
 
 # C04S6SNCS is #announcements
 # GTDAHFJCB is private channel
