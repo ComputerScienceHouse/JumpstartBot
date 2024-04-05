@@ -49,10 +49,9 @@ def handle_message(event_data):
     channel = message["channel"]
     subtype = message.get("subtype")
     usernamep = message.get("user")
-    if usernamep is not None:
-        textp = message["text"]
+    textp = message["text"]
     
-    logging.info(event_data)
+    logging.info(event_data["event"]["user"])
 
 # C04S6SNCS is #announcements
 # GTDAHFJCB is private channel
