@@ -4,12 +4,14 @@ import sys
 import time
 import re
 import random
+import logging
 from flask import Flask, request, jsonify, redirect, make_response, Response
 import json, random, textwrap, requests
 from slackeventsapi import SlackEventAdapter
 from slack import WebClient
 
 app = Flask(__name__)
+logging.basicConfig(level=logging.INFO)
 
 # Get secrets
 slack_verification_secret = os.environ.get("SLACK_VERIFICATION_TOKEN")
@@ -50,7 +52,7 @@ def handle_message(event_data):
     if usernamep is not None:
         textp = message["text"]
     
-    print(event_data)
+    logging.info(event_data)
 
 # C04S6SNCS is #announcements
 # GTDAHFJCB is private channel
