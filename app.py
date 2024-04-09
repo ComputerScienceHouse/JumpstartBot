@@ -65,31 +65,70 @@ def handle_message(event_data):
         username = usernamep
         
         # A Dictionary of message attachment options
-        attachments_json = [
-            {
-                "text": "Options:",
-                "fallback": "You are unable to post this to Jumpstart",
-                "callback_id": "send_to_jumpstart",
-                "color": "#800080",
-                "attachment_type": "default",
-                "actions": [
-                    {
-                        "name": "yes_j",
-                        "text": "Yes",
-                        "style": "primary",
-                        "type": "button",
-                        "value": "yes"
-                    },
-                    {
-                        "name": "no_j",
-                        "text": "No",
-                        "style": "danger",
-                        "type": "button",
-                        "value": "no"
-                    }
-                ]
-            }
-        ]
+        # attachments_json = [
+        #     {
+        #         "text": "Options:",
+        #         "fallback": "You are unable to post this to Jumpstart",
+        #         "callback_id": "send_to_jumpstart",
+        #         "color": "#800080",
+        #         "attachment_type": "default",
+        #         "actions": [
+        #             {
+        #                 "name": "yes_j",
+        #                 "text": "Yes",
+        #                 "style": "primary",
+        #                 "type": "button",
+        #                 "value": "yes"
+        #             },
+        #             {
+        #                 "name": "no_j",
+        #                 "text": "No",
+        #                 "style": "danger",
+        #                 "type": "button",
+        #                 "value": "no"
+        #             }
+        #         ]
+        #     }
+        # ]
+        attachments_json = [{
+            "text": "Would you like to play a game?",
+            "attachments": [
+                {
+                    "text": "Choose a game to play",
+                    "fallback": "You are unable to choose a game",
+                    "callback_id": "wopr_game",
+                    "color": "#3AA3E3",
+                    "attachment_type": "default",
+                    "actions": [
+                        {
+                            "name": "game",
+                            "text": "Chess",
+                            "type": "button",
+                            "value": "chess"
+                        },
+                        {
+                            "name": "game",
+                            "text": "Falken's Maze",
+                            "type": "button",
+                            "value": "maze"
+                        },
+                        {
+                            "name": "game",
+                            "text": "Thermonuclear War",
+                            "style": "danger",
+                            "type": "button",
+                            "value": "war",
+                            "confirm": {
+                                "title": "Are you sure?",
+                                "text": "Wouldn't you prefer a good game of chess?",
+                                "ok_text": "Yes",
+                                "dismiss_text": "No"
+                            }
+                        }
+                    ]
+                }
+            ]
+        }]
         
         if subtype == None:
             slack_client.chat_postMessage(channel=usernamep, text="Would you like to post this message to Jumpstart?\n\n" + text, attachments=attachments_json)
