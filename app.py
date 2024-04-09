@@ -58,11 +58,10 @@ def handle_message(event_data):
     if "C04S6SNCS" in channel or "GTDAHFJCB" in channel:
         global text
         global username
-        # textpp = re.sub('<.*?>', '', textp, flags=re.IGNORECASE)
+        textpp = re.sub('<.*?>', '', textp, flags=re.IGNORECASE)
         # textppp = re.sub('[:].*?[:]', '', textpp, flags=re.IGNORECASE)
         # textpp = re.sub('<[^>]+>', '', textp, flags=re.IGNORECASE)
-        # text = re.sub('[&]lt;.*?[&]gt;', '', textpp, flags=re.IGNORECASE).replace('*', '').replace('_', '').replace('`', '')
-        text = textp
+        text = re.sub('[&]lt;.*?[&]gt;', '', textpp, flags=re.IGNORECASE).replace('*', '').replace('_', '').replace('`', '')
         username = usernamep
         
         # A Dictionary of message attachment options
@@ -92,8 +91,8 @@ def handle_message(event_data):
             }
         ]
         
-        if subtype == None:
-            slack_client.chat_postMessage(channel=usernamep, text="Would you like to post this message to Jumpstart?\n\n" + text, attachments=attachments_json)
+        # if subtype == None:
+        slack_client.chat_postMessage(channel=usernamep, text="Would you like to post this message to Jumpstart?\n\n" + text, attachments=attachments_json)
 
 # The endpoint Slack will send the user's menu selection to
 @app.route("/slack/message_actions", methods=["POST"])
