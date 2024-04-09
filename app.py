@@ -97,9 +97,10 @@ def handle_message(event_data):
 # The endpoint Slack will send the user's menu selection to
 @app.route("/slack/message_actions", methods=["POST"])
 def message_actions():
-
     # Parse the request payload
     form_json = json.loads(request.form["payload"])
+
+    logging.info(form_json)
 
     # Verify that the request came from Slack
     verify_slack_token(form_json["token"])
