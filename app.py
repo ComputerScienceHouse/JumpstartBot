@@ -58,8 +58,7 @@ def handle_message(event_data):
     if "C04S6SNCS" in channel or "GTDAHFJCB" in channel:
         global text
         global username
-        textpp = re.sub('<.*?>', '', textp, flags=re.IGNORECASE)
-        # textppp = re.sub('[:].*?[:]', '', textpp, flags=re.IGNORECASE)
+        textpp = re.sub('<[^>]+>', '', textp, flags=re.IGNORECASE)
         text = re.sub('[&]lt;.*?[&]gt;', '', textpp, flags=re.IGNORECASE).replace('*', '').replace('_', '').replace('`', '')
         username = usernamep
         
