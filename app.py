@@ -93,7 +93,7 @@ def handle_message(event_data):
         ]
         
         if subtype == None:
-            slack_client.chat_postMessage(channel=usernamep, text="Would you like to post this message to Jumpstart?\n\n" + textp, attachments=attachments_json)
+            slack_client.chat_postMessage(channel=usernamep, text="Would you like to post this message to Jumpstart?\n\n" + text, attachments=attachments_json)
 
 # The endpoint Slack will send the user's menu selection to
 @app.route("/slack/message_actions", methods=["POST"])
