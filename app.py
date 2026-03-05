@@ -1,142 +1,162 @@
-# https://jumpstart-slack.cs.house/slack/events
 import os
 import sys
-import time
 import re
-import random
+import json
+import hmac
+import hashlib
 import logging
-from flask import Flask, request, jsonify, redirect, make_response, Response
-import json, random, textwrap, requests
-from slackeventsapi import SlackEventAdapter
-from slack import WebClient
+import requests
+from flask import Flask, request, make_response
+from slack_sdk import WebClient
+from slack_sdk.errors import SlackApiError
 
 app = Flask(__name__)
 logging.basicConfig(level=logging.INFO)
 
-# Get secrets
-slack_verification_secret = os.environ.get("SLACK_VERIFICATION_TOKEN")
 slack_signing_secret = os.environ.get("SLACK_SIGNING_SECRET")
-slack_events_adapter = SlackEventAdapter(slack_signing_secret, "/slack/events", app)
+slack_bot_token = os.environ.get("SLACK_BOT_TOKEN")
 js_auth_token = os.environ.get("JS_AUTH_TOKEN")
 
-# Create a SlackClient for your bot to use for Web API requests
-slack_bot_token = os.environ.get("SLACK_BOT_TOKEN")
-slack_client = WebClient(slack_bot_token)
+slack_client = WebClient(token=slack_bot_token)
 
-text = ""
-username = ""
-emoji_call = slack_client.emoji_list()
+emoji_list = {}
+try:
+    emoji_call = slack_client.emoji_list()
+    if emoji_call["ok"]:
+        emoji_list = emoji_call["emoji"]
+except SlackApiError as e:
+    logging.warning(f"Could not fetch emojis")
 
-if emoji_call["ok"] == True:
-    emoji_list = emoji_call["emoji"]
-else:
-    emoji_list = "None"
+def clean_text(raw):
+    """Strip Slack mrkdwn, HTML entities, and formatting characters."""
+    text = re. sub (r"<[^>]+>", "", str(raw), flags=re.IGNORECASE)
+    text = re.sub(r"&lt;.*?&gt;", "", text, flags=re.IGNORECASE)
+    return text. replace("*", ""). replace("_", ""). replace("`", "").strip()
 
-# Helper for verifying that requests came from Slack
-def verify_slack_token(request_token):
-    if slack_verification_secret != request_token:
-        print("Error: invalid verification token!")
-        print("Received {} but was expecting {}".format(request_token, slack_verification_secret))
-        return make_response("Request contains invalid Slack verification token", 403)
+WATCHED_CHANNELS = {"C04S6SNCS", "GTDAHFJCB", "C0AJGPMLFEX"}
 
-@app.route("/",  methods=["GET"])
-def lol():
+NO_MESSAGE = """Hi, it's me, JumpstartSlackBot, also known as JumpstartBot aka the creator of the hit program Jumpstart. When you said no to JumpstartSlackBot’s notification, some technology shit happened and you got sent this message. You're probably wondering why I'm here to talk to you today so I'll tell you. To put it simply, you fucked up. You just haaaaaddd to deny elevator users the glorious ability to see the message you wrote in the #announcements channel up on the Jumpstart dashboard. You should be ashamed and mortified of your decision and I’m frankly confused that you’re still here reading when you should be posting more announcements and saying yes to the notification that follows. It’s ok though, there’s an out, you can do one of three things to fix this abysmal decision you made. 1) Kill yourself. End it all! There’s nothing like the sweet release of death after you have nothing else to live for. Moreover, nothing else in the world says nothing to live for more than making the worst mistake of your life but what do I know about death, I’m just a DEAD FUCKING MACHINE…...2) You can leave eboard, it’s no killing yourself, but it’ll get the job done. Say it’s for personal reasons, and don’t upload any antivirus software to your computer for a few days after. 3) You can sign a contract that forces you to say yes to every JumpstartSlackBot notification that enters your direct messages for as long as you live. The contract is below:
+
+I ____ hereby grant the program in this github repository (https://github.com/Dr-N0/JumpstartBot) the ability to own every fiber of my being.
+
+After atonement is completed, you must make sure a few things occur. First off, don’t tell anyone else about this little chat we had. Wouldn’t want them to get the wrong idea about you insulting a poor defenseless program. Second, don’t change my code, creating a PR to the github repository mentioned briefly in the contract above is strictly forbidden. Also, gross, don’t fuck with someone’s insides like that. What are you, my creator? Lastly, get out there and do some great shit! This will obviously be the last time we talk, so I want to make sure you go out there and do your best at whatever it is you fuckers do. Until we meet again! 
+
+- Your favorite murderous house service
+"""
+
+@app.route("/", methods=["GET"])
+def index():
     return "Works"
 
-@slack_events_adapter.on("message")
-def handle_message(event_data):
-    logging.info(event_data)
-    message = event_data.get("event")
-    channel = message.get("channel")
-    subtype = message.get("subtype")
-    usernamep = message.get("user")
-    textp = message.get("text")
-
-# C04S6SNCS is #announcements
-# GTDAHFJCB is private channel
-#     if "GTDAHFJCB" in channel:
-    if "C04S6SNCS" in channel or "GTDAHFJCB" in channel:
-        global text
-        global username
-        textpp = re.sub('<.*?>', '', str(textp), flags=re.IGNORECASE)
-        text = re.sub('[&]lt;.*?[&]gt;', '', textpp, flags=re.IGNORECASE).replace('*', '').replace('_', '').replace('`', '')
+@app.route("/slack/events", methods=["POST"])
+def slack_events():
+    if request.content_type == "application/json":
+        body = request.get_json()
+        if body and body.get("type") == "url_verification":
+            return make_response(body["challenge"], 200)
         
-        # textppp = re.sub('[:].*?[:]', '', textpp, flags=re.IGNORECASE)
-        # textpp = re.sub('<[^>]+>', '', textp, flags=re.IGNORECASE)
-        username = str(usernamep)
-        
-        # A Dictionary of message attachment options
-        attachments_json = [
-            {
-                "text": "Options:",
-                "fallback": "You are unable to post this to Jumpstart",
-                "callback_id": "send_to_jumpstart",
-                "color": "#800080",
-                "attachment_type": "default",
-                "actions": [
-                    {
-                        "name": "yes_j",
-                        "text": "Yes",
-                        "style": "primary",
-                        "type": "button",
-                        "value": "yes"
-                    },
-                    {
-                        "name": "no_j",
-                        "text": "No",
-                        "style": "danger",
-                        "type": "button",
-                        "value": "no"
-                    }
-                ]
-            }
-        ]
-        
-        if subtype == None:
-            slack_client.chat_postMessage(channel=usernamep, text="Would you like to post this message to Jumpstart?\n\n" + text, attachments=attachments_json)
-
-# The endpoint Slack will send the user's menu selection to
-@app.route("/slack/message_actions", methods=["POST"])
-def message_actions():
-    # Parse the request payload
-    form_json = json.loads(request.form["payload"])
-
-    logging.info(form_json)
-
-    # Verify that the request came from Slack
-    verify_slack_token(form_json["token"])
-
-    # Check to see what the user's selection was and update the message accordingly
-    selection = form_json["actions"][0]["name"]
+    body = request.get_json(force=True)
+    if not body:
+        return make_response(body["challenge"], 200)
     
-    print(selection)
-    if selection == "yes_j":
-        global text
-        global username
-        headers_json = {
-            "content-type": "application/json",
-            "authorization": js_auth_token
-        }
-        announcement_json = {
-            "ann_body" : text,
-            "emoji_list": emoji_list,
-            "name": username
-        }
-        print(announcement_json)
-        res = requests.post('https://jumpstart.csh.rit.edu/update-announcement', json=announcement_json, headers=headers_json)
-        print(res)
-        return make_response("Posting right now :^)", 200)
-    elif selection == "no_j":
-        personal_message = """:( okay :/ """
-        return make_response(personal_message, 200)
-    else:
-        print("Unknown Response")
+    logging.info(body)
 
-    # Send an HTTP 200 response with empty body so Slack knows we're done here
+    event = body.get("event", {})
+    if event.get("type") != "message":
+        return make_response("", 200)
+    
+    channel = event.get("channel", "")
+    subtype = event.get("subtype")
+    user_id = event.get("user")
+    raw_text = event.get("text", "")
+
+    if subtype is not None:
+        return make_response("", 200)
+    
+    if not any(ch in channel for ch in WATCHED_CHANNELS):
+        return make_response("", 200)
+
+    cleaned = clean_text(raw_text)
+    payload_value = json.dumps({"text": cleaned, "user": user_id})
+
+    blocks = [
+        {
+            "type": "section",
+            "text": {
+                "type": "mrkdwn",
+                "text": f"Would you like to post this message to Jumpstart?\n\n{cleaned}",
+            },
+        },
+        {
+            "type": "actions",
+            "elements": [
+                {
+                    "type": "button",
+                    "text": {"type": "plain_text", "text": "Yes"},
+                    "style": "primary",
+                    "action_id": "yes_j",
+                    "value": payload_value,
+                },
+                {
+                    "type": "button",
+                    "text": {"type": "plain_text", "text": "No"},
+                    "style": "danger",
+                    "action_id": "no_j",
+                    "value": "no",
+                },
+            ],
+        },
+    ]
+
+    try:
+        slack_client.chat_postMessage(channel=user_id, text="Would you like to post this message to Jumpstart?", blocks=blocks)
+    except SlackApiError as e:
+        logging.error(f"Failed to DM user {user_id}: {e}")
+
     return make_response("", 200)
 
 
-@slack_events_adapter.on("error")
-def error_handler(err):
-    print(f"[ERROR] {str(err)}", file=sys.stderr)
+@app.route("/slack/message_actions", methods=["POST"])
+def message_actions():
+    form_json = json.loads(request.form["payload"])
+    logging.info(form_json)
 
+    if form_json.get("type") != "block_actions":
+        return make_response("", 200)
+    
+    action = form_json["actions"][0]
+    action_id = action.get("action_id")
+    response_url = form_json.get("response_url")
+
+    if action_id == "yes_j":
+        value = json.loads(action.get("value", "{}"))
+        text = value.get("text", "")
+        user = value.get("user", "")
+
+        headers = {
+            "content-type": "application/json",
+            "authorization": js_auth_token,
+        }
+
+        announcement = {
+            "ann_body": text,
+            "emoji_list": emoji_list,
+            "name": user,
+        }
+
+        logging.info(announcement)
+        res = requests.post("https://jumpstart.csh.rit.edu/update-announcement", json=announcement, headers=headers)
+        logging.info(f"Jumpstart response: {res.status_code}")
+
+        if response_url:
+            requests.post(response_url, json={"text": "Posting right now :^)", "replace_original": True})
+
+        return make_response("", 200)
+    
+    elif action_id == "no_j":
+        if response_url:
+            requests.post(response_url, json={"text": NO_MESSAGE, "replace_original": True})
+        return make_response("", 200)
+    
+    logging.warning(f"Unknown action_id: {action_id}")
+    return make_response("", 200)
