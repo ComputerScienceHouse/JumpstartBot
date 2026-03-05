@@ -57,7 +57,7 @@ After atonement is completed, you must make sure a few things occur. First off, 
 - Your favorite murderous house service
 """
 
-@app.route("/", methods["GET"])
+@app.route("/", methods=["GET"])
 def index():
     return "Works"
 
