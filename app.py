@@ -65,6 +65,7 @@ def index():
 @app.route("/slack/events", methods=["POST"])
 def slack_events():
     print("asdf")
+    logging.info("asdf")
     if not verify_slack_signature(request):
         return make_response("Invalid request signature", 403)
     
@@ -137,6 +138,7 @@ def slack_events():
 @app.route("/slack/message_actions", methods=["POST"])
 def message_actions():
     print("asdfasdf")
+    logging.info("asdfasdf")
     if not verify_slack_signature(request):
         return make_response("Invalid request signature", 403)
     
