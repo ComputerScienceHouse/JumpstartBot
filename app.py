@@ -83,7 +83,7 @@ def slack_events():
         {
             "type": "section",
             "text": {
-                "type": "mrdwn",
+                "type": "mrkdwn",
                 "text": f"Would you like to post this message to Jumpstart?\n\n{cleaned}",
             },
         },
