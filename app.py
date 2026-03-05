@@ -16,6 +16,8 @@ logging.basicConfig(level=logging.INFO)
 slack_signing_secret = os.environ.get("SLACK_SIGNING_SECRET")
 slack_bot_token = os.environ.get("SLACK_BOT_TOKEN")
 js_auth_token = os.environ.get("JS_AUTH_TOKEN")
+WATCHED_CHANNELS = os.environ.get("SLACK_ANNOUNCEMENT_CHANNELS").split(",")
+
 
 slack_client = WebClient(token=slack_bot_token)
 
@@ -32,17 +34,6 @@ def clean_text(raw):
     text = re. sub (r"<[^>]+>", "", str(raw), flags=re.IGNORECASE)
     text = re.sub(r"&lt;.*?&gt;", "", text, flags=re.IGNORECASE)
     return text. replace("*", ""). replace("_", ""). replace("`", "").strip()
-
-WATCHED_CHANNELS = {"C04S6SNCS", "GTDAHFJCB", "C0AJGPMLFEX"}
-
-NO_MESSAGE = """Hi, it's me, JumpstartSlackBot, also known as JumpstartBot aka the creator of the hit program Jumpstart. When you said no to JumpstartSlackBot’s notification, some technology shit happened and you got sent this message. You're probably wondering why I'm here to talk to you today so I'll tell you. To put it simply, you fucked up. You just haaaaaddd to deny elevator users the glorious ability to see the message you wrote in the #announcements channel up on the Jumpstart dashboard. You should be ashamed and mortified of your decision and I’m frankly confused that you’re still here reading when you should be posting more announcements and saying yes to the notification that follows. It’s ok though, there’s an out, you can do one of three things to fix this abysmal decision you made. 1) Kill yourself. End it all! There’s nothing like the sweet release of death after you have nothing else to live for. Moreover, nothing else in the world says nothing to live for more than making the worst mistake of your life but what do I know about death, I’m just a DEAD FUCKING MACHINE…...2) You can leave eboard, it’s no killing yourself, but it’ll get the job done. Say it’s for personal reasons, and don’t upload any antivirus software to your computer for a few days after. 3) You can sign a contract that forces you to say yes to every JumpstartSlackBot notification that enters your direct messages for as long as you live. The contract is below:
-
-I ____ hereby grant the program in this github repository (https://github.com/Dr-N0/JumpstartBot) the ability to own every fiber of my being.
-
-After atonement is completed, you must make sure a few things occur. First off, don’t tell anyone else about this little chat we had. Wouldn’t want them to get the wrong idea about you insulting a poor defenseless program. Second, don’t change my code, creating a PR to the github repository mentioned briefly in the contract above is strictly forbidden. Also, gross, don’t fuck with someone’s insides like that. What are you, my creator? Lastly, get out there and do some great shit! This will obviously be the last time we talk, so I want to make sure you go out there and do your best at whatever it is you fuckers do. Until we meet again! 
-
-- Your favorite murderous house service
-"""
 
 @app.route("/", methods=["GET"])
 def index():
@@ -155,7 +146,7 @@ def message_actions():
     
     elif action_id == "no_j":
         if response_url:
-            requests.post(response_url, json={"text": NO_MESSAGE, "replace_original": True})
+            requests.post(response_url, json={"text": "Okay :( maybe next time", "replace_original": True})
         return make_response("", 200)
     
     logging.warning(f"Unknown action_id: {action_id}")
