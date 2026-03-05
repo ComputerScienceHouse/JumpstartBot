@@ -29,14 +29,16 @@ except SlackApiError as e:
 
 def verify_slack_signature(req):
     timestamp = req.headers.get("X-Slack-Request-Timestamp", "")
-    slack_signature = req.headers.get("X-SlackSignature", "")
+    slack_signature = req.headers.get("X-Slack-Signature", "")
     raw_body = req.get_data(as_text=True)
     
-    basestring = f"vo: (timestamp}: (raw_body}"
+    basestring = f"v0: {timestamp}: {raw_body}"
     computed = "v0=" + hmac.new(
-        slack_signing_secret.encode ("utf-8"), basestring. encode ("utf-8"), hashlib.sha256,
-    ). hexdigest()
-    return hmac. compare_digest(computed, slack_signature)
+        slack_signing_secret.encode("utf-8"),
+        basestring.encode("utf-8"),
+        hashlib.sha256,
+    ).hexdigest()
+    return hmac.compare_digest(computed, slack_signature)
 
 def clean_text(raw):
     """Strip Slack mrkdwn, HTML entities, and formatting characters."""
