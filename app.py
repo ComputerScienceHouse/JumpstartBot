@@ -28,6 +28,7 @@ except SlackApiError as e:
     logging.warning(f"Could not fetch emojis")
 
 def verify_slack_signature(req):
+    print("asdfasdfasdfasdfasdf")
     timestamp = req.headers.get("X-Slack-Request-Timestamp", "")
     slack_signature = req.headers.get("X-Slack-Signature", "")
     raw_body = req.get_data(as_text=True)
@@ -63,7 +64,6 @@ def index():
 
 @app.route("/slack/events", methods=["POST"])
 def slack_events():
-    print(request.text)
     if not verify_slack_signature(request):
         return make_response("Invalid request signature", 403)
     
