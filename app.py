@@ -27,19 +27,6 @@ try:
 except SlackApiError as e:
     logging.warning(f"Could not fetch emojis")
 
-def verify_slack_signature(req):
-    timestamp = req.headers.get("X-Slack-Request-Timestamp", "")
-    slack_signature = req.headers.get("X-Slack-Signature", "")
-    raw_body = req.get_data(as_text=True)
-    
-    basestring = f"v0: {timestamp}: {raw_body}"
-    computed = "v0=" + hmac.new(
-        slack_signing_secret.encode("utf-8"),
-        basestring.encode("utf-8"),
-        hashlib.sha256,
-    ).hexdigest()
-    return hmac.compare_digest(computed, slack_signature)
-
 def clean_text(raw):
     """Strip Slack mrkdwn, HTML entities, and formatting characters."""
     text = re. sub (r"<[^>]+>", "", str(raw), flags=re.IGNORECASE)
@@ -63,10 +50,6 @@ def index():
 
 @app.route("/slack/events", methods=["POST"])
 def slack_events():
-    logging.info(dict(request.headers))
-    if not verify_slack_signature(request):
-        return make_response("Invalid request signature", 403)
-    
     if request.content_type == "application/json":
         body = request.get_json()
         if body and body.get("type") == "url_verification":
@@ -135,9 +118,6 @@ def slack_events():
 
 @app.route("/slack/message_actions", methods=["POST"])
 def message_actions():
-    if not verify_slack_signature(request):
-        return make_response("Invalid request signature", 403)
-    
     form_json = json.loads(request.form["payload"])
     logging.info(form_json)
 
